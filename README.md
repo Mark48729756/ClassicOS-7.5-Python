@@ -1,5 +1,5 @@
 
-# <p align="center">🌌 ClassicOS 7.5 | Pure Python Edition 🌌</p>
+# <p align="center">🌌 ClassicOS 7.5 | Nostalgia 🌌</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/OS-Windows%2010%20%7C%2011-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Windows 10/11" />
