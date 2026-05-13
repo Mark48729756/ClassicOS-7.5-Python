@@ -275,6 +275,144 @@ def draw_icon(painter: QPainter, name: str, x: int, y: int, size: int = 32):
         for row in range(3):
             p.drawLine(9, 12+row*4, s-4, 12+row*4)
 
+    elif n == "puzzle":
+        # 15-puzzle icon
+        p.fillRect(2, 2, s-4, s-4, lt)
+        p.setPen(QPen(bk, 1))
+        p.drawRect(2, 2, s-5, s-5)
+        cell = (s-6)//4
+        for row in range(4):
+            for col in range(4):
+                if row == 3 and col == 3:
+                    continue  # missing piece
+                cx2 = 3 + col*cell
+                cy2 = 3 + row*cell
+                p.fillRect(cx2, cy2, cell-1, cell-1, wh)
+                p.drawRect(cx2, cy2, cell-2, cell-2)
+                p.setFont(font_chicago(5))
+                n2 = row*4+col+1
+                p.drawText(QRect(cx2, cy2, cell-2, cell-2), Qt.AlignCenter, str(n2))
+
+    elif n == "scrapbook":
+        # Scrapbook icon — album pages
+        p.fillRect(4, 6, s-8, s-8, QColor(0xFF, 0xEE, 0xCC))
+        p.fillRect(2, 4, s-8, s-8, QColor(0xFF, 0xFF, 0xEE))
+        p.fillRect(6, 8, s-8, s-8, wh)
+        p.setPen(QPen(bk, 1))
+        p.drawRect(6, 8, s-9, s-9)
+        # small picture in scrapbook
+        p.fillRect(8, 10, 12, 10, QColor(0xCC, 0xDD, 0xFF))
+        p.setPen(QPen(QColor(0x88, 0x88, 0xAA), 1))
+        p.drawLine(8, 16, 14, 12)
+        p.drawLine(14, 12, 20, 18)
+
+    elif n == "calculator":
+        # Proper calculator icon — silver body with display + buttons
+        # Body
+        p.fillRect(3, 2, s-6, s-4, QColor(0xDD, 0xDD, 0xDD))
+        p.setPen(QPen(bk, 1))
+        p.drawRoundedRect(3, 2, s-7, s-5, 2, 2)
+        # Top highlight bevel
+        p.setPen(QPen(QColor(0xFF, 0xFF, 0xFF), 1))
+        p.drawLine(4, 3, s-5, 3)
+        p.drawLine(4, 3, 4, s-4)
+        p.setPen(QPen(QColor(0x99, 0x99, 0x99), 1))
+        p.drawLine(s-5, 3, s-5, s-4)
+        p.drawLine(4, s-4, s-5, s-4)
+        # Display — green LCD
+        p.fillRect(6, 5, s-12, 9, QColor(0x77, 0xAA, 0x77))
+        p.setPen(QPen(QColor(0x44, 0x77, 0x44), 1))
+        p.drawRect(6, 5, s-13, 8)
+        # "8" digit segments inside display
+        p.setPen(QPen(QColor(0x00, 0x44, 0x00), 1))
+        p.setFont(font_chicago(6, True))
+        p.drawText(QRect(6, 5, s-12, 9), Qt.AlignRight | Qt.AlignVCenter, "0 ")
+        # Button grid — 4 cols × 4 rows
+        cols_b, rows_b = 4, 4
+        bw = (s - 10) // cols_b
+        bh = 4
+        btn_colors = [
+            QColor(0xCC, 0xCC, 0xCC),  # gray ops
+            QColor(0xCC, 0xCC, 0xCC),
+            QColor(0xCC, 0xCC, 0xCC),
+            QColor(0xEE, 0xAA, 0x44),  # orange = ops
+        ]
+        for row_b in range(rows_b):
+            for col_b in range(cols_b):
+                bx2 = 5 + col_b * bw
+                by2 = 16 + row_b * (bh + 2)
+                col_fill = btn_colors[col_b] if row_b < 3 else QColor(0xBB, 0xBB, 0xBB)
+                p.fillRect(bx2, by2, bw-1, bh, col_fill)
+                p.setPen(QPen(QColor(0x77, 0x77, 0x77), 1))
+                p.drawRect(bx2, by2, bw-2, bh-1)
+
+    elif n == "alarm_clock":
+        # Alarm clock icon
+        p.setPen(QPen(bk, 1))
+        p.setBrush(QBrush(lt))
+        p.drawEllipse(4, 6, s-10, s-10)
+        # clock hands
+        mid2 = s//2
+        p.drawLine(mid2, mid2, mid2, mid2-6)  # minute
+        p.drawLine(mid2, mid2, mid2+4, mid2+2) # hour
+        # bells top
+        p.setPen(QPen(bk, 2))
+        p.drawLine(4, 6, 2, 2)
+        p.drawLine(s-6, 6, s-2, 2)
+        # feet
+        p.drawLine(6, s-5, 4, s-2)
+        p.drawLine(s-6, s-5, s-4, s-2)
+
+    elif n == "clock":
+        # Round clock face with numerals
+        # Shadow
+        p.setPen(Qt.NoPen)
+        p.setBrush(QBrush(QColor(0x88, 0x88, 0x88, 120)))
+        p.drawEllipse(4, 5, s-6, s-6)
+        # Face
+        p.setBrush(QBrush(QColor(0xFF, 0xFF, 0xF8)))
+        p.setPen(QPen(bk, 2))
+        p.drawEllipse(2, 2, s-6, s-6)
+        # Bezel highlight
+        p.setPen(QPen(QColor(0xFF, 0xFF, 0xFF), 1))
+        p.drawArc(3, 3, s-8, s-8, 45*16, 180*16)
+        # Hour markers
+        cx3, cy3 = s//2 - 1, s//2 - 1
+        r_outer = (s-8)//2
+        p.setPen(QPen(bk, 1))
+        for i in range(12):
+            ang = math.radians(i * 30 - 90)
+            x1 = int(cx3 + (r_outer-2) * math.cos(ang))
+            y1 = int(cy3 + (r_outer-2) * math.sin(ang))
+            x2 = int(cx3 + (r_outer-4 if i % 3 != 0 else r_outer-5) * math.cos(ang))
+            y2 = int(cy3 + (r_outer-4 if i % 3 != 0 else r_outer-5) * math.sin(ang))
+            p.setPen(QPen(bk, 2 if i % 3 == 0 else 1))
+            p.drawLine(x1, y1, x2, y2)
+        # Hour hand (10:10 position)
+        p.setPen(QPen(bk, 2))
+        h_ang = math.radians(300 - 90)  # 10 o'clock
+        p.drawLine(cx3, cy3, int(cx3 + r_outer*0.5*math.cos(h_ang)), int(cy3 + r_outer*0.5*math.sin(h_ang)))
+        # Minute hand
+        m_ang = math.radians(60 - 90)   # :10 minutes
+        p.drawLine(cx3, cy3, int(cx3 + r_outer*0.7*math.cos(m_ang)), int(cy3 + r_outer*0.7*math.sin(m_ang)))
+        # Center dot
+        p.setBrush(QBrush(bk)); p.setPen(Qt.NoPen)
+        p.drawEllipse(cx3-2, cy3-2, 4, 4)
+
+    elif n == "chooser":
+        bbox(2, 2, s-4, s-4, lt, bk, 1)
+        p.setPen(QPen(bk, 1))
+        # zones list on left
+        p.fillRect(4, 8, (s-8)//2, s-12, wh)
+        p.drawRect(4, 8, (s-8)//2-1, s-13)
+        # device list on right
+        rx = 4 + (s-8)//2 + 2
+        p.fillRect(rx, 8, s-rx-3, s-12, wh)
+        p.drawRect(rx, 8, s-rx-4, s-13)
+        # small icons in right pane
+        for i in range(3):
+            draw_icon(p, "finder", rx+2, 10+i*8, 6)
+
     else:
         # Generic document with dog-ear
         bbox(4, 2, s-8, s-4, wh, bk, 1)
@@ -343,12 +481,26 @@ class VFS:
                 "Control Panels": {},
             },
             "Applications": {
+                "Calculator":  {"__type": "app", "__target": "calculator"},
                 "Terminal":    {"__type": "app", "__target": "terminal"},
                 "Browser":     {"__type": "app", "__target": "browser"},
                 "Note Pad":    {"__type": "app", "__target": "notepad"},
                 "Control Panels": {"__type": "app", "__target": "settings"},
                 "Stickies":    {"__type": "app", "__target": "stickies"},
                 "MacPaint":    {"__type": "app", "__target": "macpaint"},
+                "Puzzle":      {"__type": "app", "__target": "puzzle"},
+                "Scrapbook":   {"__type": "app", "__target": "scrapbook"},
+                "Clock":       {"__type": "app", "__target": "clock"},
+            },
+            "Other": {
+                "Calculator":  {"__type": "app", "__target": "calculator"},
+                "Clock":       {"__type": "app", "__target": "clock"},
+                "Note Pad":    {"__type": "app", "__target": "notepad"},
+                "Terminal":    {"__type": "app", "__target": "terminal"},
+                "MacPaint":    {"__type": "app", "__target": "macpaint"},
+                "Scrapbook":   {"__type": "app", "__target": "scrapbook"},
+                "Puzzle":      {"__type": "app", "__target": "puzzle"},
+                "Control Panels": {"__type": "app", "__target": "settings"},
             },
             "Documents": {
                 "Read Me.txt": {"__type": "file",
@@ -491,6 +643,7 @@ class Mac75Window(QWidget):
         self._rsz_geom   = None
         self._wire_drag  = False
         self._wire_rect  = None
+        self._close_pressed = False
         self._has_resize = has_resize
         self._has_zoom   = has_zoom
         self._zoomed     = False
@@ -508,6 +661,7 @@ class Mac75Window(QWidget):
         self._content.move(0, self.TITLE_H)
         self._content.resize(self.width(), self.height() - self.TITLE_H)
 
+        self._skip_default_anim = False
         WM.register(self)
         # Animate open — deferred so open_window() can move() us first
         QTimer.singleShot(0, self._animate_open)
@@ -515,12 +669,31 @@ class Mac75Window(QWidget):
 
     # ── animation helpers ──────────────────────────────────────
     def _animate_open(self):
-        # Called after move() — geometry() is already at final position
+        if self._skip_default_anim:
+            return
         g = self.geometry()
+        self._final_geom = g
         cx, cy = g.center().x(), g.center().y()
+        start = QRect(cx - 1, cy - 1, 2, 2)
+        self.setGeometry(start)
         self._anim = QPropertyAnimation(self, b"geometry")
-        self._anim.setDuration(140)
-        self._anim.setStartValue(QRect(cx - 2, cy - 2, 4, 4))
+        self._anim.setDuration(180)
+        self._anim.setStartValue(start)
+        self._anim.setEndValue(g)
+        self._anim.setEasingCurve(QEasingCurve.OutQuart)
+        self._anim.start()
+
+    def animate_open_from(self, from_rect):
+        self._skip_default_anim = True
+        if self._anim:
+            self._anim.stop()
+        g = self.geometry()
+        self._final_geom = g
+        start = QRect(from_rect.center().x() - 1, from_rect.center().y() - 1, 2, 2)
+        self.setGeometry(start)
+        self._anim = QPropertyAnimation(self, b"geometry")
+        self._anim.setDuration(180)
+        self._anim.setStartValue(start)
         self._anim.setEndValue(g)
         self._anim.setEasingCurve(QEasingCurve.OutQuart)
         self._anim.start()
@@ -528,10 +701,11 @@ class Mac75Window(QWidget):
     def _animate_close(self, callback):
         g = self.geometry()
         cx, cy = g.center().x(), g.center().y()
+        end = QRect(cx - 1, cy - 1, 2, 2)
         self._anim = QPropertyAnimation(self, b"geometry")
-        self._anim.setDuration(110)
+        self._anim.setDuration(140)
         self._anim.setStartValue(g)
-        self._anim.setEndValue(QRect(cx - 2, cy - 2, 4, 4))
+        self._anim.setEndValue(end)
         self._anim.setEasingCurve(QEasingCurve.InQuart)
         self._anim.finished.connect(callback)
         self._anim.start()
@@ -545,21 +719,21 @@ class Mac75Window(QWidget):
 
     def close_window(self):
         desk = self.parent()
+        win_geom = self._min_geom if self._minimized and self._min_geom else self.geometry()
         target_rect = self._find_icon_rect()
         if target_rect is None:
             target_rect = QRect(desk.width()//2 - 24, desk.height() - 24, 48, 48)
+        WM.unregister(self)
+        self.hide()
         if hasattr(desk, '_zoom_rects_close'):
-            desk._zoom_rects_close(self.geometry(), target_rect)
-        self._anim = QPropertyAnimation(self, b"geometry")
-        self._anim.setDuration(200)
-        self._anim.setStartValue(self.geometry())
-        self._anim.setEndValue(target_rect)
-        self._anim.setEasingCurve(QEasingCurve.InQuart)
-        self._anim.finished.connect(lambda: (WM.unregister(self), self.deleteLater()))
-        self._anim.start()
+            desk._zoom_rects_close(win_geom, target_rect)
+        QTimer.singleShot(_ZoomRectsOverlay.DURATION_MS, self.deleteLater)
 
     def _find_icon_rect(self):
         """Find the desktop icon that corresponds to this window."""
+        src = getattr(self, '_icon_src_rect', None)
+        if src:
+            return src
         desk = self.parent()
         if not hasattr(desk, 'findChildren'):
             return None
@@ -702,11 +876,17 @@ class Mac75Window(QWidget):
         # Close box — only visible when active (plain square, no X, System 7 style)
         if self._active:
             cb_x, cb_y, cb_s = 6, 5, 12
-            p.fillRect(cb_x, cb_y, cb_s, cb_s, C_WHITE)
-            p.setPen(QPen(C_BLACK, 1))
-            p.drawRect(cb_x, cb_y, cb_s-1, cb_s-1)
-            # Inner recessed square (the real System 7 close box look)
-            p.drawRect(cb_x+2, cb_y+2, cb_s-5, cb_s-5)
+            if self._close_pressed:
+                p.fillRect(cb_x, cb_y, cb_s, cb_s, C_BLACK)
+                p.setPen(QPen(C_WHITE, 1))
+                p.drawRect(cb_x, cb_y, cb_s-1, cb_s-1)
+                p.drawRect(cb_x+2, cb_y+2, cb_s-5, cb_s-5)
+            else:
+                p.fillRect(cb_x, cb_y, cb_s, cb_s, C_WHITE)
+                p.setPen(QPen(C_BLACK, 1))
+                p.drawRect(cb_x, cb_y, cb_s-1, cb_s-1)
+                # Inner recessed square (the real System 7 close box look)
+                p.drawRect(cb_x+2, cb_y+2, cb_s-5, cb_s-5)
 
         # Collapse/WindowShade box (left of zoom) — active only
         if self._has_zoom and self._active:
@@ -781,7 +961,8 @@ class Mac75Window(QWidget):
         if e.button() != Qt.LeftButton:
             return
         if self._close_rect().contains(pos):
-            self.close_window()
+            self._close_pressed = True
+            self.update()
             return
         if self._has_zoom and self._collapse_rect().contains(pos):
             self._windowshade()
@@ -830,6 +1011,12 @@ class Mac75Window(QWidget):
             self.setCursor(Qt.ArrowCursor)
 
     def mouseReleaseEvent(self, e):
+        if self._close_pressed:
+            self._close_pressed = False
+            self.update()
+            if self._close_rect().contains(e.pos()):
+                self.close_window()
+            return
         if self._wire_drag and self._wire_rect:
             # Teleport window to wireframe position
             self.move(self._wire_rect.topLeft())
@@ -1155,7 +1342,7 @@ class AboutWindow(Mac75Window):
         lay.addWidget(FaceW(), alignment=Qt.AlignCenter)
         for txt, bold, sz in [
             ("System 7.5", True, 16),
-            ("ClassicOS 1.0 Simulator", False, 12),
+            ("ClassicOS 1.1 Simulator", False, 12),
             ("", False, 9),
             ("Built with Python + PyQt5", False, 11),
             ("© 2026 ClassicOS Systems", False, 10),
@@ -1687,7 +1874,17 @@ class FinderWindow(Mac75Window):
             if VFS_INST.isdir(full):
                 icon = "folder"
             elif node.get("__type") == "app":
-                icon = node.get("__target", "about")
+                tgt = node.get("__target", "about")
+                # Map target to proper icon name
+                _icon_map = {
+                    "calculator": "calculator", "terminal": "terminal",
+                    "browser": "browser", "notepad": "notepad",
+                    "settings": "settings", "stickies": "stickies",
+                    "macpaint": "macpaint", "puzzle": "puzzle",
+                    "scrapbook": "scrapbook", "clock": "clock",
+                    "finder": "finder", "about": "about",
+                }
+                icon = _icon_map.get(tgt, tgt)
             else:
                 icon = "notepad"
             ic = _FinderIcon(name, icon, full, self)
@@ -1744,18 +1941,38 @@ class FinderWindow(Mac75Window):
             VFS_INST.mkdir(self._path.rstrip("/") + "/" + name.strip())
             self._load(self._path)
 
-    def _open_item(self, full_path):
+    def _open_item(self, full_path, icon_widget=None):
         node = VFS_INST.resolve(full_path) or {}
+        desk = self._desk
+        fr = None
+        if icon_widget:
+            fr = QRect(icon_widget.mapTo(desk, QPoint(0, 0)), icon_widget.size())
         if VFS_INST.isdir(full_path):
-            FinderWindow(self._desk, full_path)
+            new_win = FinderWindow(desk, full_path)
+            new_win._icon_src_rect = fr
+            if fr:
+                new_win.setVisible(False)
+                desk._zoom_rects_open(fr, new_win.geometry())
+                QTimer.singleShot(_ZoomRectsOverlay.DURATION_MS,
+                    lambda ww=new_win, frc=fr: (ww.setVisible(True), ww.animate_open_from(frc)))
+            desk._menu.raise_()
+            desk._wf_overlay.raise_()
         elif node.get("__type") == "app":
-            self._desk.open_window(node.get("__target", ""))
+            desk.open_window(node.get("__target", ""), icon_widget)
         elif node.get("__type") == "file":
-            NotePadWindow(self._desk, full_path)
+            new_win = NotePadWindow(desk, full_path)
+            new_win._icon_src_rect = fr
+            if fr:
+                new_win.setVisible(False)
+                desk._zoom_rects_open(fr, new_win.geometry())
+                QTimer.singleShot(_ZoomRectsOverlay.DURATION_MS,
+                    lambda ww=new_win, frc=fr: (ww.setVisible(True), ww.animate_open_from(frc)))
+            desk._menu.raise_()
+            desk._wf_overlay.raise_()
 
 
 class _FinderIcon(QWidget):
-    double_clicked = pyqtSignal(str)
+    double_clicked = pyqtSignal(str, QWidget)
 
     def __init__(self, name, icon, path, finder_win=None):
         super().__init__()
@@ -1816,7 +2033,7 @@ class _FinderIcon(QWidget):
         drag.exec_(Qt.MoveAction | Qt.CopyAction)
 
     def mouseDoubleClickEvent(self, e):
-        self.double_clicked.emit(self.path)
+        self.double_clicked.emit(self.path, self)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -1913,13 +2130,138 @@ class ControlPanelWindow(Mac75Window):
         ml.addStretch()
 
         # Version info
-        ver = QLabel("ClassicOS 7.5 — Control Panels v1.0")
+        ver = QLabel("ClassicOS 7.5 — Control Panels v1.1")
         ver.setFont(font_chicago(9))
         ver.setAlignment(Qt.AlignCenter)
         ver.setStyleSheet("color:#666; background:transparent;")
         ml.addWidget(ver)
 
         lay.addWidget(main, 1)
+
+
+# ─────────────────────────────────────────────────────────────
+#  CALCULATOR WINDOW  (classic System 7 Desk Accessory)
+# ─────────────────────────────────────────────────────────────
+class CalculatorWindow(Mac75Window):
+    """System 7 Calculator desk accessory — fully functional."""
+
+    BTNS = [
+        ("7", "8", "9", "÷"),
+        ("4", "5", "6", "×"),
+        ("1", "2", "3", "−"),
+        ("0", ".", "=", "+"),
+        ("C", "±", "%", "⌫"),
+    ]
+
+    def __init__(self, parent):
+        super().__init__(parent, "Calculator", "calculator", has_resize=False, has_zoom=False)
+        self.resize(180, 230)
+        self._expr     = ""
+        self._display  = "0"
+        self._new_num  = True
+        self._op       = None
+        self._acc      = None
+        self._btn_objs = {}
+
+        c = self.content_widget()
+        c.setAttribute(Qt.WA_StyledBackground, True)
+        c.setStyleSheet("background:#CCCCCC;")
+        lay = QVBoxLayout(c)
+        lay.setContentsMargins(6, 6, 6, 6)
+        lay.setSpacing(4)
+
+        # LCD display
+        self._disp_lbl = QLabel("0")
+        self._disp_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self._disp_lbl.setFixedHeight(28)
+        self._disp_lbl.setFont(QFont("Courier New", 16, QFont.Bold))
+        self._disp_lbl.setStyleSheet(
+            "background:#AABBAA; border:2px inset #888;"
+            " padding:0 4px; color:#001100;")
+        lay.addWidget(self._disp_lbl)
+
+        # Button grid
+        for row in self.BTNS:
+            row_w = QWidget()
+            row_w.setStyleSheet("background:transparent;")
+            rl = QHBoxLayout(row_w)
+            rl.setContentsMargins(0, 0, 0, 0)
+            rl.setSpacing(3)
+            for label in row:
+                btn = Mac75Button(label, row_w)
+                btn.setFixedSize(34, 26)
+                btn.setFont(font_chicago(11, label in ("=",)))
+                btn.clicked.connect(lambda _, l=label: self._press(l))
+                rl.addWidget(btn)
+                self._btn_objs[label] = btn
+            lay.addWidget(row_w)
+
+    def _press(self, key):
+        if key == "C":
+            self._display = "0"; self._expr = ""; self._op = None
+            self._acc = None; self._new_num = True
+        elif key == "⌫":
+            if not self._new_num and len(self._display) > 1:
+                self._display = self._display[:-1]
+            else:
+                self._display = "0"; self._new_num = True
+        elif key == "±":
+            if self._display != "0":
+                if self._display.startswith("-"):
+                    self._display = self._display[1:]
+                else:
+                    self._display = "-" + self._display
+        elif key == "%":
+            try:
+                self._display = self._fmt(float(self._display) / 100)
+            except Exception:
+                pass
+        elif key in ("÷", "×", "−", "+"):
+            self._apply_pending()
+            self._op = key; self._new_num = True
+        elif key == "=":
+            self._apply_pending(); self._op = None
+        elif key == ".":
+            if self._new_num:
+                self._display = "0."; self._new_num = False
+            elif "." not in self._display:
+                self._display += "."
+        else:  # digit
+            if self._new_num:
+                self._display = key; self._new_num = False
+            else:
+                if self._display == "0":
+                    self._display = key
+                else:
+                    self._display += key
+        self._disp_lbl.setText(self._display)
+
+    def _apply_pending(self):
+        try:
+            cur = float(self._display)
+        except ValueError:
+            return
+        if self._op is None:
+            self._acc = cur; return
+        if self._acc is None:
+            self._acc = cur; return
+        ops = {"÷": lambda a,b: a/b if b else float("inf"),
+               "×": lambda a,b: a*b,
+               "−": lambda a,b: a-b,
+               "+": lambda a,b: a+b}
+        try:
+            self._acc = ops[self._op](self._acc, cur)
+        except Exception:
+            self._acc = 0.0
+        self._display = self._fmt(self._acc)
+        self._new_num = True
+
+    @staticmethod
+    def _fmt(n):
+        if n == int(n) and abs(n) < 1e12:
+            return str(int(n))
+        s = f"{n:.8g}"
+        return s
 
 
 # ─────────────────────────────────────────────────────────────
@@ -1975,6 +2317,127 @@ class StickiesWindow(Mac75Window):
         c = self._note_color.name()
         self.content_widget().setStyleSheet(f"background:{c};")
         self.editor.setStyleSheet(f"background:{c}; border:none;")
+
+
+# ─────────────────────────────────────────────────────────────
+#  CLOCK WINDOW  (analog clock desk accessory)
+# ─────────────────────────────────────────────────────────────
+class ClockWindow(Mac75Window):
+    """Analog clock desk accessory."""
+    def __init__(self, parent):
+        super().__init__(parent, "Clock", "clock", has_resize=False, has_zoom=False)
+        self.resize(180, 200)
+        self._clock_24h = getattr(parent, '_clock_24h', False)
+
+        c = self.content_widget()
+        c.setAttribute(Qt.WA_StyledBackground, True)
+        c.setStyleSheet("background:#CCCCCC;")
+
+        vlay = QVBoxLayout(c)
+        vlay.setContentsMargins(4, 4, 4, 4)
+        vlay.setSpacing(4)
+
+        # Analog clock face widget
+        self._face = _ClockFaceWidget()
+        vlay.addWidget(self._face, 1)
+
+        # Digital time label
+        self._lbl = QLabel()
+        self._lbl.setAlignment(Qt.AlignCenter)
+        self._lbl.setFont(font_chicago(13, True))
+        self._lbl.setStyleSheet("background:transparent; color:#000;")
+        vlay.addWidget(self._lbl)
+
+        # Date label
+        self._date_lbl = QLabel()
+        self._date_lbl.setAlignment(Qt.AlignCenter)
+        self._date_lbl.setFont(font_chicago(9))
+        self._date_lbl.setStyleSheet("background:transparent; color:#444;")
+        vlay.addWidget(self._date_lbl)
+
+        self._timer = QTimer(self)
+        self._timer.timeout.connect(self._tick)
+        self._timer.start(1000)
+        self._tick()
+
+    def _tick(self):
+        now = datetime.now()
+        if self._clock_24h:
+            self._lbl.setText(now.strftime("%H:%M:%S"))
+        else:
+            self._lbl.setText(now.strftime("%I:%M:%S %p"))
+        self._date_lbl.setText(now.strftime("%A, %B %d"))
+        self._face.set_time(now.hour, now.minute, now.second)
+
+
+class _ClockFaceWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self._h = 0; self._m = 0; self._s = 0
+        self.setMinimumSize(120, 120)
+
+    def set_time(self, h, m, s):
+        self._h = h; self._m = m; self._s = s
+        self.update()
+
+    def paintEvent(self, e):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing, True)
+        W, H = self.width(), self.height()
+        r = min(W, H) // 2 - 4
+        cx, cy = W // 2, H // 2
+
+        # Face gradient
+        grad = QRadialGradient(cx, cy, r)
+        grad.setColorAt(0, QColor(0xFF, 0xFF, 0xF8))
+        grad.setColorAt(0.85, QColor(0xEE, 0xEE, 0xE8))
+        grad.setColorAt(1, QColor(0xCC, 0xCC, 0xC4))
+        p.setBrush(QBrush(grad))
+        p.setPen(QPen(QColor(0x44, 0x44, 0x44), 2))
+        p.drawEllipse(cx-r, cy-r, r*2, r*2)
+
+        # Bezel ring highlight
+        p.setPen(QPen(QColor(0xFF, 0xFF, 0xFF, 180), 1))
+        p.setBrush(Qt.NoBrush)
+        p.drawArc(cx-r+1, cy-r+1, r*2-2, r*2-2, 45*16, 180*16)
+
+        # Hour markers
+        for i in range(12):
+            ang = math.radians(i * 30 - 90)
+            is_qtr = (i % 3 == 0)
+            r1 = r - 3 if is_qtr else r - 2
+            r2 = r - 8 if is_qtr else r - 5
+            x1 = int(cx + r1 * math.cos(ang))
+            y1 = int(cy + r1 * math.sin(ang))
+            x2 = int(cx + r2 * math.cos(ang))
+            y2 = int(cy + r2 * math.sin(ang))
+            p.setPen(QPen(QColor(0, 0, 0), 2 if is_qtr else 1))
+            p.drawLine(x1, y1, x2, y2)
+
+        # Second hand (red thin)
+        s_ang = math.radians(self._s * 6 - 90)
+        p.setPen(QPen(QColor(0xCC, 0x00, 0x00), 1))
+        p.drawLine(cx - int(r*0.15*math.cos(s_ang)),
+                   cy - int(r*0.15*math.sin(s_ang)),
+                   int(cx + r*0.85*math.cos(s_ang)),
+                   int(cy + r*0.85*math.sin(s_ang)))
+
+        # Minute hand
+        m_ang = math.radians((self._m * 6 + self._s * 0.1) - 90)
+        p.setPen(QPen(QColor(0, 0, 0), 2, Qt.SolidLine, Qt.RoundCap))
+        p.drawLine(cx, cy, int(cx + r*0.75*math.cos(m_ang)), int(cy + r*0.75*math.sin(m_ang)))
+
+        # Hour hand
+        h_ang = math.radians(((self._h % 12) * 30 + self._m * 0.5) - 90)
+        p.setPen(QPen(QColor(0, 0, 0), 3, Qt.SolidLine, Qt.RoundCap))
+        p.drawLine(cx, cy, int(cx + r*0.5*math.cos(h_ang)), int(cy + r*0.5*math.sin(h_ang)))
+
+        # Center dot
+        p.setBrush(QBrush(QColor(0, 0, 0)))
+        p.setPen(Qt.NoPen)
+        p.drawEllipse(cx-3, cy-3, 6, 6)
+        p.setBrush(QBrush(QColor(0xCC, 0x00, 0x00)))
+        p.drawEllipse(cx-2, cy-2, 4, 4)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -2276,7 +2739,12 @@ class MenuBar75(QWidget):
     def __init__(self, parent):
         super().__init__(parent)
         self.setFixedHeight(22)
-        self.setStyleSheet("background:#FFFFFF; border-bottom: 1px solid #000;")
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setAutoFillBackground(True)
+        pal = self.palette()
+        pal.setColor(self.backgroundRole(), QColor(0xFF, 0xFF, 0xFF))
+        self.setPalette(pal)
+        self.setStyleSheet("MenuBar75 { background:#FFFFFF; border-bottom: 1px solid #000; }")
         self._desk = parent
 
         lay = QHBoxLayout(self)
@@ -2372,7 +2840,7 @@ class MenuBar75(QWidget):
         self.clock.setStyleSheet("padding:0 6px; background:transparent;")
         lay.addWidget(self.clock)
 
-        # Application Menu button (right side — Finder icon + app name)
+        # Application Menu button (right side — app icon + app name)
         self._app_menu_btn = QPushButton("Finder")
         self._app_menu_btn.setFont(font_chicago(11, True))
         self._app_menu_btn.setFlat(True)
@@ -2381,6 +2849,14 @@ class MenuBar75(QWidget):
             " background:transparent;}"
             "QPushButton:pressed,QPushButton:checked{background:#000; color:#FFF;}")
         self._app_menu_btn.setCheckable(True)
+        # Set initial Finder icon
+        pm0 = QPixmap(16, 16)
+        pm0.fill(Qt.transparent)
+        pp0 = QPainter(pm0)
+        draw_icon(pp0, "finder", 0, 0, 16)
+        pp0.end()
+        self._app_menu_btn.setIcon(QIcon(pm0))
+        self._app_menu_btn.setIconSize(QSize(16, 16))
         self._app_menu_btn.clicked.connect(self._show_app_menu)
         lay.addWidget(self._app_menu_btn)
 
@@ -2391,6 +2867,10 @@ class MenuBar75(QWidget):
 
         # Update app menu button when WM changes
         WM.changed.connect(self._refresh_app_menu)
+
+    def _refresh_control_strip(self):
+        if hasattr(self._desk, '_control_strip'):
+            self._desk._control_strip.update()
 
     def _build_menu(self, items):
         m = QMenu(self)
@@ -2427,14 +2907,14 @@ class MenuBar75(QWidget):
         m.addSeparator()
         # Apple Menu Items (classic System 7 items)
         for label, target in [
-            ("Alarm Clock",    None),
-            ("Calculator",     None),
+            ("Alarm Clock",    "clock"),
+            ("Calculator",     "calculator"),
             ("Chooser",        None),
             ("Control Panels", "settings"),
             ("Find File",      "finder"),
             ("Note Pad",       "notepad"),
-            ("Puzzle",         None),
-            ("Scrapbook",      None),
+            ("Puzzle",         "puzzle"),
+            ("Scrapbook",      "scrapbook"),
             ("Stickies",       "stickies"),
         ]:
             if target:
@@ -2451,18 +2931,49 @@ class MenuBar75(QWidget):
         m.setFont(font_chicago(11))
         m.setStyleSheet(
             "QMenu{background:#FFF; border:1px solid #000; padding:2px 0;}"
-            "QMenu::item{padding:3px 24px 3px 20px;}"
+            "QMenu::item{padding:3px 28px 3px 6px;}"
             "QMenu::item:selected{background:#000; color:#FFF;}"
             "QMenu::separator{height:1px; background:#888; margin:2px 4px;}")
-        m.addAction("Finder").triggered.connect(
-            lambda: self._desk.open_window("finder"))
+
+        def make_app_icon(icon_name, size=16):
+            pm = QPixmap(size, size)
+            pm.fill(Qt.transparent)
+            pp = QPainter(pm)
+            pp.setRenderHint(QPainter.Antialiasing, False)
+            draw_icon(pp, icon_name, 0, 0, size)
+            pp.end()
+            return QIcon(pm)
+
+        # Finder always top
+        a_finder = m.addAction(make_app_icon("finder"), "Finder")
+        a_finder.triggered.connect(lambda: self._desk.open_window("finder"))
         m.addSeparator()
+
+        # Running windows — icon + title
+        _icon_map = {
+            "calculator": "calculator", "terminal": "terminal",
+            "browser": "browser", "notepad": "notepad",
+            "settings": "settings", "stickies": "stickies",
+            "macpaint": "macpaint", "puzzle": "puzzle",
+            "scrapbook": "scrapbook", "clock": "clock",
+            "finder": "folder", "about": "about", "trash": "trash",
+        }
         for win in WM.windows:
-            act = m.addAction(win.title[:28])
-            act.triggered.connect(lambda _, w=win: WM.raise_window(w))
+            tgt = getattr(win, '_icon_target', 'about')
+            icon_nm = _icon_map.get(tgt, 'about')
+            label = win.title[:24]
+            if getattr(win, '_minimized', False):
+                label = "  " + label + " (minimized)"
+            act = m.addAction(make_app_icon(icon_nm), label)
+            act.triggered.connect(lambda _, w=win: (
+                WM.raise_window(w),
+                w.restore() if getattr(w, '_minimized', False) else None
+            ))
+
         m.addSeparator()
         m.addAction("Hide Others").triggered.connect(lambda: None)
-        m.addAction("Show All").triggered.connect(lambda: None)
+        m.addAction("Show All").triggered.connect(
+            lambda: [w.restore() if getattr(w, '_minimized', False) else None for w in WM.windows])
         pos = self._app_menu_btn.mapToGlobal(QPoint(0, self._app_menu_btn.height()))
         m.exec_(pos)
         self._app_menu_btn.setChecked(False)
@@ -2471,8 +2982,33 @@ class MenuBar75(QWidget):
         active = WM.get_active()
         if active:
             name = active.title[:20]
+            # Show icon in button too
+            tgt = getattr(active, '_icon_target', 'about')
+            _icon_map = {
+                "calculator": "calculator", "terminal": "terminal",
+                "browser": "browser", "notepad": "notepad",
+                "settings": "settings", "stickies": "stickies",
+                "macpaint": "macpaint", "puzzle": "puzzle",
+                "scrapbook": "scrapbook", "clock": "clock",
+                "finder": "folder", "about": "about", "trash": "trash",
+            }
+            icon_nm = _icon_map.get(tgt, 'about')
+            pm = QPixmap(16, 16)
+            pm.fill(Qt.transparent)
+            pp = QPainter(pm)
+            draw_icon(pp, icon_nm, 0, 0, 16)
+            pp.end()
+            self._app_menu_btn.setIcon(QIcon(pm))
+            self._app_menu_btn.setIconSize(QSize(16, 16))
         else:
             name = "Finder"
+            pm = QPixmap(16, 16)
+            pm.fill(Qt.transparent)
+            pp = QPainter(pm)
+            draw_icon(pp, "finder", 0, 0, 16)
+            pp.end()
+            self._app_menu_btn.setIcon(QIcon(pm))
+            self._app_menu_btn.setIconSize(QSize(16, 16))
         self._app_menu_btn.setText(name)
 
     def _finder_action(self, action):
@@ -2481,6 +3017,12 @@ class MenuBar75(QWidget):
             active._new_folder()
         elif action == "open":
             self._desk.open_window("finder")
+
+    def paintEvent(self, e):
+        p = QPainter(self)
+        p.fillRect(0, 0, self.width(), self.height(), QColor(0xFF, 0xFF, 0xFF))
+        p.setPen(QPen(QColor(0x00, 0x00, 0x00), 1))
+        p.drawLine(0, self.height() - 1, self.width(), self.height() - 1)
 
     def _tick(self):
         fmt = "%I:%M %p" if not getattr(self._desk, "_clock_24h", False) else "%H:%M:%S"
@@ -2668,9 +3210,14 @@ class BootScreen75(QWidget):
 #  ZOOM RECTS ANIMATION  (System 7 window open/close effect)
 # ─────────────────────────────────────────────────────────────
 class _ZoomRectsOverlay(QWidget):
-    """Draws 3-4 expanding/contracting outlines animating between two rects."""
-    STEPS = 4
-    DURATION_MS = 160
+    """
+    Authentic System 7 ZoomRects: fixed N wireframe rects drawn with XOR,
+    marching from window rect toward close box in discrete steps.
+    """
+    STEPS       = 8     # number of discrete animation frames
+    INTERVAL_MS = 28    # ~35 fps — fast but eye can catch the lines
+    TUNNEL_N    = 4     # how many rects visible simultaneously (tunnel depth)
+    DURATION_MS = STEPS * INTERVAL_MS
 
     def __init__(self, parent, from_rect: QRect, to_rect: QRect, opening=True):
         super().__init__(parent)
@@ -2678,39 +3225,54 @@ class _ZoomRectsOverlay(QWidget):
         self.setAttribute(Qt.WA_NoSystemBackground)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setGeometry(parent.rect())
-        self._from = from_rect
-        self._to   = to_rect
+        self._from    = from_rect
+        self._to      = to_rect
         self._opening = opening
-        self._step = 0
+        self._step    = 0
 
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._tick)
-        self._timer.start(self.DURATION_MS // self.STEPS)
+        self._timer.start(self.INTERVAL_MS)
 
     def _tick(self):
         self._step += 1
         self.update()
-        if self._step >= self.STEPS:
+        if self._step > self.STEPS:
             self._timer.stop()
             self.hide()
             self.deleteLater()
 
+    def _lerp_rect(self, t: float) -> QRect:
+        """Linearly interpolate between from and to rect at position t ∈ [0,1]."""
+        t = max(0.0, min(1.0, t))
+        x = int(self._from.x() + (self._to.x() - self._from.x()) * t)
+        y = int(self._from.y() + (self._to.y() - self._from.y()) * t)
+        w = int(self._from.width()  + (self._to.width()  - self._from.width())  * t)
+        h = int(self._from.height() + (self._to.height() - self._from.height()) * t)
+        return QRect(x, y, w, h)
+
     def paintEvent(self, e):
         p = QPainter(self)
         p.setRenderHint(QPainter.Antialiasing, False)
-        p.setPen(QPen(C_BLACK, 1, Qt.SolidLine))
         p.setBrush(Qt.NoBrush)
+        # XOR composition — invert whatever is under the 1px black lines,
+        # exactly like the original 68k Toolbox RasterOp patXor
+        p.setCompositionMode(QPainter.RasterOp_SourceXorDestination)
 
-        total = self.STEPS
-        for i in range(self._step + 1):
-            t = i / total  # 0..1
-            if not self._opening:
-                t = 1.0 - t
-            x = int(self._from.x() + (self._to.x() - self._from.x()) * t)
-            y = int(self._from.y() + (self._to.y() - self._from.y()) * t)
-            w = int(self._from.width()  + (self._to.width()  - self._from.width())  * t)
-            h = int(self._from.height() + (self._to.height() - self._from.height()) * t)
-            p.drawRect(x, y, w, h)
+        # Draw TUNNEL_N simultaneous rects spaced evenly behind the leading edge
+        # leading_t advances from 0→1 (open) or 0→1 (close, from=win to=closebox)
+        leading_t = self._step / self.STEPS
+        spacing   = 1.0 / self.STEPS  # gap between consecutive rects
+
+        for i in range(self.TUNNEL_N):
+            t = leading_t - i * spacing
+            if t < 0:
+                continue
+            r = self._lerp_rect(t)
+            if r.width() < 1 or r.height() < 1:
+                continue
+            p.setPen(QPen(Qt.white, 1, Qt.SolidLine))  # white XOR = inversion
+            p.drawRect(r)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -2832,7 +3394,7 @@ class _PaletteWidget(QWidget):
     def paintEvent(self, e):
         p = QPainter(self)
         p.setRenderHint(QPainter.Antialiasing, False)
-        p.fillRect(self.rect(), C_PLATINUM)
+        
         # current fg/bg swatches
         p.fillRect(4, 4, 22, 22, self._pw._bg)
         p.setPen(QPen(C_BLACK, 1)); p.setBrush(Qt.NoBrush)
@@ -3028,6 +3590,798 @@ class _CanvasWidget(QWidget):
 
 
 # ─────────────────────────────────────────────────────────────
+#  PUZZLE WINDOW  (15-puzzle classic desk accessory)
+# ─────────────────────────────────────────────────────────────
+class PuzzleWindow(Mac75Window):
+    """Classic Mac 15-puzzle desk accessory."""
+    GRID = 4
+    TILE = 68
+
+    def __init__(self, parent):
+        super().__init__(parent, "Puzzle", "puzzle", has_resize=False, has_zoom=False)
+        sz = self.GRID * self.TILE + 12
+        self.resize(sz, sz + self.TITLE_H + 34)
+        import random as _rand
+        self._tiles = list(range(1, self.GRID*self.GRID)) + [0]
+        # shuffle with 200 random valid moves
+        for _ in range(400):
+            blank = self._tiles.index(0)
+            r, c = blank // self.GRID, blank % self.GRID
+            moves = []
+            for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+                nr, nc = r+dr, c+dc
+                if 0 <= nr < self.GRID and 0 <= nc < self.GRID:
+                    moves.append(nr*self.GRID+nc)
+            nb = _rand.choice(moves)
+            self._tiles[blank], self._tiles[nb] = self._tiles[nb], self._tiles[blank]
+        self._solved = False
+        self._moves = 0
+
+        c = self.content_widget()
+        c.setAttribute(Qt.WA_StyledBackground, True)
+        c.setStyleSheet("background:#CCCCCC;")
+        vlay = QVBoxLayout(c)
+        vlay.setContentsMargins(4, 4, 4, 4)
+        vlay.setSpacing(4)
+
+        self._canvas = QWidget()
+        self._canvas.setFixedSize(self.GRID*self.TILE+4, self.GRID*self.TILE+4)
+        self._canvas.setStyleSheet("background:#CCCCCC;")
+        self._canvas.paintEvent = self._paint_puzzle
+        self._canvas.mousePressEvent = self._click_tile
+        vlay.addWidget(self._canvas, 0, Qt.AlignCenter)
+
+        bar = QWidget()
+        bar.setStyleSheet("background:transparent;")
+        bl = QHBoxLayout(bar)
+        bl.setContentsMargins(0, 0, 0, 0)
+        self._stat_lbl = QLabel("Moves: 0")
+        self._stat_lbl.setFont(font_chicago(10))
+        self._stat_lbl.setStyleSheet("background:transparent;")
+        btn_new = Mac75Button("New Game", bar)
+        btn_new.clicked.connect(self._new_game)
+        bl.addWidget(self._stat_lbl, 1)
+        bl.addWidget(btn_new)
+        vlay.addWidget(bar)
+
+    def _paint_puzzle(self, e):
+        p = QPainter(self._canvas)
+        p.setRenderHint(QPainter.Antialiasing, False)
+        T = self.TILE
+        G = self.GRID
+        for idx, val in enumerate(self._tiles):
+            r, c = idx // G, idx % G
+            x, y = 2 + c*T, 2 + r*T
+            if val == 0:
+                p.fillRect(x, y, T-2, T-2, QColor(0xBB, 0xBB, 0xBB))
+                continue
+            # tile face
+            grad = QLinearGradient(x, y, x, y+T-2)
+            grad.setColorAt(0, QColor(0xEE, 0xEE, 0xEE))
+            grad.setColorAt(1, QColor(0xBB, 0xBB, 0xBB))
+            p.fillRect(x, y, T-2, T-2, QBrush(grad))
+            # bevel
+            p.setPen(QPen(C_WHITE, 1))
+            p.drawLine(x, y, x+T-3, y)
+            p.drawLine(x, y, x, y+T-3)
+            p.setPen(QPen(C_BLACK, 1))
+            p.drawLine(x+T-2, y, x+T-2, y+T-2)
+            p.drawLine(x, y+T-2, x+T-2, y+T-2)
+            # number
+            p.setFont(font_chicago(20, True))
+            p.setPen(C_BLACK)
+            p.drawText(QRect(x, y, T-2, T-2), Qt.AlignCenter, str(val))
+        if self._solved:
+            p.setFont(font_chicago(14, True))
+            p.setPen(QColor(0x00, 0x00, 0x88))
+            p.drawText(self._canvas.rect(), Qt.AlignCenter, "🎉 Solved!")
+
+    def _click_tile(self, e):
+        if self._solved:
+            return
+        T = self.TILE
+        G = self.GRID
+        c = (e.x() - 2) // T
+        r = (e.y() - 2) // T
+        if not (0 <= r < G and 0 <= c < G):
+            return
+        clicked = r*G + c
+        blank = self._tiles.index(0)
+        br, bc = blank // G, blank % G
+        cr, cc = r, c
+        # Check if adjacent
+        if (abs(br - cr) == 1 and bc == cc) or (abs(bc - cc) == 1 and br == cr):
+            self._tiles[blank], self._tiles[clicked] = self._tiles[clicked], self._tiles[blank]
+            self._moves += 1
+            self._stat_lbl.setText(f"Moves: {self._moves}")
+            if self._tiles == list(range(1, G*G)) + [0]:
+                self._solved = True
+                self._stat_lbl.setText(f"Solved in {self._moves} moves! 🎉")
+            self._canvas.update()
+
+    def _new_game(self):
+        import random as _rand
+        G = self.GRID
+        self._tiles = list(range(1, G*G)) + [0]
+        for _ in range(400):
+            blank = self._tiles.index(0)
+            r, c = blank // G, blank % G
+            moves = []
+            for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+                nr, nc = r+dr, c+dc
+                if 0 <= nr < G and 0 <= nc < G:
+                    moves.append(nr*G+nc)
+            nb = _rand.choice(moves)
+            self._tiles[blank], self._tiles[nb] = self._tiles[nb], self._tiles[blank]
+        self._solved = False
+        self._moves = 0
+        self._stat_lbl.setText("Moves: 0")
+        self._canvas.update()
+
+
+# ─────────────────────────────────────────────────────────────
+#  SCRAPBOOK WINDOW
+# ─────────────────────────────────────────────────────────────
+class ScrapbookWindow(Mac75Window):
+    """System 7 Scrapbook desk accessory."""
+    def __init__(self, parent):
+        super().__init__(parent, "Scrapbook", "scrapbook", has_resize=True, has_zoom=False)
+        self.resize(400, 320)
+        self._pages = [
+            ("Text", "Welcome to ClassicOS 7.5 Scrapbook!\n\nThis is page 1.\nYou can add text notes here."),
+            ("Text", "Page 2 — Notes\n\nClassicOS 7.5 simulates System 7.5 Platinum.\nEnjoy the nostalgia!"),
+            ("Text", "Page 3 — Ideas\n\n• Build cool apps\n• Explore the filesystem\n• Have fun!"),
+        ]
+        self._page = 0
+
+        c = self.content_widget()
+        c.setAttribute(Qt.WA_StyledBackground, True)
+        c.setStyleSheet("background:#EEEEEE;")
+        vlay = QVBoxLayout(c)
+        vlay.setContentsMargins(0, 0, 0, 0)
+        vlay.setSpacing(0)
+
+        # toolbar
+        tb = QWidget(); tb.setFixedHeight(26)
+        tb.setStyleSheet("background:#CCCCCC; border-bottom:1px solid #000;")
+        tl = QHBoxLayout(tb); tl.setContentsMargins(4, 3, 4, 3); tl.setSpacing(4)
+        self._prev_btn = Mac75Button("◀ Prev", tb)
+        self._next_btn = Mac75Button("Next ▶", tb)
+        self._add_btn  = Mac75Button("Add Page", tb)
+        self._del_btn  = Mac75Button("Delete", tb)
+        self._page_lbl = QLabel("1 / 3"); self._page_lbl.setFont(font_chicago(10))
+        self._page_lbl.setStyleSheet("background:transparent;")
+        self._prev_btn.clicked.connect(self._prev)
+        self._next_btn.clicked.connect(self._next)
+        self._add_btn.clicked.connect(self._add)
+        self._del_btn.clicked.connect(self._delete)
+        for w in [self._prev_btn, self._next_btn, self._page_lbl, self._add_btn, self._del_btn]:
+            tl.addWidget(w)
+        tl.addStretch()
+        vlay.addWidget(tb)
+
+        # content area
+        self._editor = QPlainTextEdit()
+        self._editor.setFont(QFont("Courier New", 12))
+        self._editor.setStyleSheet("background:white; border:none; padding:8px;")
+        self._editor.textChanged.connect(self._save_current)
+        vlay.addWidget(self._editor, 1)
+
+        # status
+        self._stat = QLabel("Scrapbook — 3 pages")
+        self._stat.setFont(font_chicago(9))
+        self._stat.setFixedHeight(16)
+        self._stat.setStyleSheet("background:#CCCCCC; border-top:1px solid #000; padding:0 4px;")
+        vlay.addWidget(self._stat)
+        self._load_page()
+
+    def _load_page(self):
+        self._editor.blockSignals(True)
+        self._editor.setPlainText(self._pages[self._page][1])
+        self._editor.blockSignals(False)
+        total = len(self._pages)
+        self._page_lbl.setText(f"{self._page+1} / {total}")
+        self._stat.setText(f"Scrapbook — {total} page{'s' if total!=1 else ''}")
+
+    def _save_current(self):
+        kind, _ = self._pages[self._page]
+        self._pages[self._page] = (kind, self._editor.toPlainText())
+
+    def _prev(self):
+        if self._page > 0:
+            self._page -= 1; self._load_page()
+
+    def _next(self):
+        if self._page < len(self._pages) - 1:
+            self._page += 1; self._load_page()
+
+    def _add(self):
+        self._pages.append(("Text", "New page…"))
+        self._page = len(self._pages) - 1
+        self._load_page()
+
+    def _delete(self):
+        if len(self._pages) <= 1:
+            return
+        self._pages.pop(self._page)
+        self._page = min(self._page, len(self._pages)-1)
+        self._load_page()
+
+
+# ─────────────────────────────────────────────────────────────
+#  ALARM CLOCK WINDOW
+# ─────────────────────────────────────────────────────────────
+class AlarmClockWindow(Mac75Window):
+    """Classic Mac Alarm Clock desk accessory."""
+    def __init__(self, parent):
+        super().__init__(parent, "Alarm Clock", "alarm_clock", has_resize=False, has_zoom=False)
+        self.resize(200, 160)
+        self._alarm_time = None
+        self._alarm_on = False
+        self._show_seconds = True
+
+        c = self.content_widget()
+        c.setAttribute(Qt.WA_StyledBackground, True)
+        c.setStyleSheet("background:#CCCCCC;")
+        vlay = QVBoxLayout(c)
+        vlay.setContentsMargins(8, 8, 8, 8)
+        vlay.setSpacing(6)
+
+        # Digital clock display
+        self._time_lbl = QLabel("12:00:00 AM")
+        self._time_lbl.setAlignment(Qt.AlignCenter)
+        self._time_lbl.setFont(QFont("Courier New", 20, QFont.Bold))
+        self._time_lbl.setStyleSheet(
+            "background:#AABBAA; border:2px inset #888; padding:4px 8px; color:#001100;")
+        vlay.addWidget(self._time_lbl)
+
+        # Date display
+        self._date_lbl = QLabel()
+        self._date_lbl.setAlignment(Qt.AlignCenter)
+        self._date_lbl.setFont(font_chicago(10))
+        self._date_lbl.setStyleSheet("background:transparent;")
+        vlay.addWidget(self._date_lbl)
+
+        # Alarm row
+        alarm_row = QWidget(); alarm_row.setStyleSheet("background:transparent;")
+        al = QHBoxLayout(alarm_row); al.setContentsMargins(0, 0, 0, 0); al.setSpacing(4)
+        alarm_lbl = QLabel("Alarm:"); alarm_lbl.setFont(font_chicago(10))
+        alarm_lbl.setStyleSheet("background:transparent;")
+        self._alarm_edit = QLineEdit("07:00 AM")
+        self._alarm_edit.setFont(font_chicago(10))
+        self._alarm_edit.setFixedWidth(80)
+        self._alarm_edit.setStyleSheet("border:2px inset #888; background:white; padding:1px 3px;")
+        self._alarm_chk_btn = Mac75Button("Set Alarm", alarm_row, small=True)
+        self._alarm_chk_btn.clicked.connect(self._toggle_alarm)
+        al.addWidget(alarm_lbl); al.addWidget(self._alarm_edit); al.addWidget(self._alarm_chk_btn)
+        vlay.addWidget(alarm_row)
+
+        self._alarm_status = QLabel("Alarm off")
+        self._alarm_status.setFont(font_chicago(9))
+        self._alarm_status.setAlignment(Qt.AlignCenter)
+        self._alarm_status.setStyleSheet("background:transparent; color:#666;")
+        vlay.addWidget(self._alarm_status)
+        vlay.addStretch()
+
+        self._timer = QTimer(self)
+        self._timer.timeout.connect(self._tick)
+        self._timer.start(500)
+        self._tick()
+
+    def _tick(self):
+        now = datetime.now()
+        self._time_lbl.setText(now.strftime("%I:%M:%S %p"))
+        self._date_lbl.setText(now.strftime("%A, %B %d, %Y"))
+        if self._alarm_on and self._alarm_time:
+            t_str = now.strftime("%I:%M %p").lstrip("0")
+            if self._alarm_time == now.strftime("%I:%M %p") or \
+               self._alarm_time == now.strftime("%-I:%M %p"):
+                Mac75Dialog.info(self.parent(), "Alarm Clock", f"⏰ ALARM! It's {t_str}")
+                self._alarm_on = False
+                self._alarm_status.setText("Alarm off")
+
+    def _toggle_alarm(self):
+        if self._alarm_on:
+            self._alarm_on = False
+            self._alarm_status.setText("Alarm off")
+            self._alarm_chk_btn.setText("Set Alarm")
+        else:
+            t = self._alarm_edit.text().strip()
+            self._alarm_time = t
+            self._alarm_on = True
+            self._alarm_status.setText(f"Alarm set: {t}")
+            self._alarm_chk_btn.setText("Cancel")
+
+
+# ─────────────────────────────────────────────────────────────
+#  CHOOSER WINDOW
+# ─────────────────────────────────────────────────────────────
+class ChooserWindow(Mac75Window):
+    """Classic Mac Chooser desk accessory."""
+    def __init__(self, parent):
+        super().__init__(parent, "Chooser", "chooser", has_resize=False, has_zoom=False)
+        self.resize(340, 240)
+        c = self.content_widget()
+        c.setAttribute(Qt.WA_StyledBackground, True)
+        c.setStyleSheet("background:#CCCCCC;")
+        vlay = QVBoxLayout(c)
+        vlay.setContentsMargins(8, 8, 8, 8)
+        vlay.setSpacing(6)
+
+        hlay = QHBoxLayout()
+        # Left: device list
+        left = QWidget(); left.setStyleSheet("background:white; border:2px inset #888;")
+        ll = QVBoxLayout(left); ll.setContentsMargins(4, 4, 4, 4)
+        lbl_dev = QLabel("AppleTalk Zones"); lbl_dev.setFont(font_chicago(10, True))
+        lbl_dev.setStyleSheet("background:transparent;")
+        self._zone_list = QListWidget()
+        self._zone_list.setFont(font_chicago(10))
+        self._zone_list.setStyleSheet("border:none; background:transparent;")
+        for z in ["*", "LocalZone", "ClassicNet", "MacLAN"]:
+            self._zone_list.addItem(z)
+        self._zone_list.setCurrentRow(0)
+        ll.addWidget(lbl_dev); ll.addWidget(self._zone_list)
+
+        # Right: device icons
+        right = QWidget(); right.setStyleSheet("background:white; border:2px inset #888;")
+        rl = QVBoxLayout(right); rl.setContentsMargins(4, 4, 4, 4)
+        lbl_dev2 = QLabel("Devices"); lbl_dev2.setFont(font_chicago(10, True))
+        lbl_dev2.setStyleSheet("background:transparent;")
+        self._dev_list = QListWidget()
+        self._dev_list.setFont(font_chicago(10))
+        self._dev_list.setStyleSheet("border:none; background:transparent;")
+        for d in ["LaserWriter", "ImageWriter", "StyleWriter", "Network Printer"]:
+            self._dev_list.addItem(d)
+        rl.addWidget(lbl_dev2); rl.addWidget(self._dev_list)
+        hlay.addWidget(left); hlay.addWidget(right)
+        vlay.addLayout(hlay)
+
+        # AppleTalk toggle
+        at_row = QWidget(); at_row.setStyleSheet("background:transparent;")
+        atl = QHBoxLayout(at_row); atl.setContentsMargins(0, 0, 0, 0)
+        at_lbl = QLabel("AppleTalk:"); at_lbl.setFont(font_chicago(10))
+        at_lbl.setStyleSheet("background:transparent;")
+        self._at_btn = Mac75Button("Active", at_row, small=True)
+        atl.addWidget(at_lbl); atl.addWidget(self._at_btn); atl.addStretch()
+        vlay.addWidget(at_row)
+
+
+# ─────────────────────────────────────────────────────────────
+#  CONTROL STRIP (bottom-left System 7.5 floating panel)
+# ─────────────────────────────────────────────────────────────
+class ControlStrip(QWidget):
+    """System 7.5 Control Strip — floating panel bottom.
+    Left side: system controls (monitor, sound, brightness).
+    Right side: app launcher icons for all apps."""
+
+    ITEM_W = 28
+    HEIGHT = 28
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._desk = parent
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setStyleSheet("background:#CCCCCC;")
+
+        # System control items (left side)
+        self._sys_items = [
+            ("monitor_depth",  "Monitor Depth",   self._show_monitor_depth),
+            ("monitor_res",    "Resolution",      self._show_monitor_res),
+            ("sound",          "Sound Volume",    self._show_volume),
+            ("brightness",     "Brightness",      self._show_brightness),
+        ]
+
+        # App launcher items (right side) — removed, icons are on desktop
+        self._app_items = []
+
+        self._pressed_sys = -1
+        self._pressed_app = -1
+        self._popup = None
+        self.setMouseTracking(True)
+        self._tooltip_txt = ""
+        self._tooltip_timer = QTimer(self)
+        self._tooltip_timer.setSingleShot(True)
+        self._tooltip_timer.timeout.connect(self._show_tooltip)
+        self._tooltip_pos = QPoint()
+        self._collapsed = False
+        self._update_size()
+
+    def _update_size(self):
+        if self._collapsed:
+            self.setFixedSize(20, self.HEIGHT)
+        else:
+            n_sys = len(self._sys_items)
+            n_app = len(self._app_items)
+            # separator = 6px only if there are app items, 4px padding each side
+            sep = 8 if n_app > 0 else 0
+            w = 4 + n_sys * self.ITEM_W + sep + n_app * self.ITEM_W + 4
+            self.setFixedSize(w, self.HEIGHT)
+
+    def _sys_x(self, i):
+        return 4 + i * self.ITEM_W
+
+    def _app_x(self, i):
+        n_sys = len(self._sys_items)
+        return 4 + n_sys * self.ITEM_W + 8 + i * self.ITEM_W
+
+    def _sep_x(self):
+        return 4 + len(self._sys_items) * self.ITEM_W + 2
+
+    def paintEvent(self, e):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing, False)
+        W, H = self.width(), self.height()
+
+        # Background + raised bevel
+        p.fillRect(0, 0, W, H, C_PLATINUM)
+        p.setPen(QPen(C_WHITE, 1))
+        p.drawLine(0, 0, W-1, 0)
+        p.drawLine(0, 0, 0, H-1)
+        p.setPen(QPen(C_BLACK, 1))
+        p.drawLine(W-1, 0, W-1, H-1)
+        p.drawLine(0, H-1, W-1, H-1)
+        p.setPen(QPen(C_PLATINUM_DK, 1))
+        p.drawLine(W-2, 1, W-2, H-2)
+        p.drawLine(1, H-2, W-2, H-2)
+
+        if self._collapsed:
+            p.setPen(QPen(C_BLACK, 1))
+            p.setBrush(QBrush(C_BLACK))
+            pts = QPolygon([QPoint(6, 8), QPoint(6, 14), QPoint(14, 11)])
+            p.drawPolygon(pts)
+            return
+
+        IH = H - 6  # icon height inside strip
+
+        # Draw system control buttons
+        for i, (icon_name, tooltip, _) in enumerate(self._sys_items):
+            x = self._sys_x(i)
+            pressed = (self._pressed_sys == i)
+            bx, by, bw, bh = x, 2, self.ITEM_W - 2, IH
+            if pressed:
+                p.fillRect(bx, by, bw, bh, C_PLATINUM_DK)
+                p.setPen(QPen(C_BLACK, 1))
+            else:
+                p.fillRect(bx, by, bw, bh, C_PLATINUM)
+                p.setPen(QPen(C_WHITE, 1))
+            p.drawLine(bx, by, bx+bw-1, by)
+            p.drawLine(bx, by, bx, by+bh-1)
+            p.setPen(QPen(C_PLATINUM_DK if not pressed else C_WHITE, 1))
+            p.drawLine(bx+bw-1, by, bx+bw-1, by+bh-1)
+            p.drawLine(bx, by+bh-1, bx+bw-1, by+bh-1)
+            self._draw_strip_icon(p, icon_name, bx + bw//2 - 7, by + bh//2 - 7, 14)
+
+        # Separator — only show if there are app items
+        if self._app_items:
+            sx = self._sep_x()
+            p.setPen(QPen(C_PLATINUM_DK, 1))
+            p.drawLine(sx, 3, sx, H-4)
+            p.setPen(QPen(C_WHITE, 1))
+            p.drawLine(sx+1, 3, sx+1, H-4)
+
+        # Draw app launcher buttons
+        for i, (icon_name, target, label) in enumerate(self._app_items):
+            x = self._app_x(i)
+            pressed = (self._pressed_app == i)
+            # Check if app is running (window exists in WM)
+            running = any(
+                getattr(w, '_icon_target', '') == target
+                for w in WM.windows
+            )
+            bx, by, bw, bh = x, 2, self.ITEM_W - 1, IH
+            bg_col = QColor(0xBB, 0xBB, 0xBB) if pressed else (
+                QColor(0xDD, 0xF0, 0xDD) if running else C_PLATINUM
+            )
+            p.fillRect(bx, by, bw, bh, bg_col)
+            # Bevel
+            p.setPen(QPen(C_WHITE if not pressed else C_PLATINUM_DK, 1))
+            p.drawLine(bx, by, bx+bw-1, by)
+            p.drawLine(bx, by, bx, by+bh-1)
+            p.setPen(QPen(C_PLATINUM_DK if not pressed else C_WHITE, 1))
+            p.drawLine(bx+bw-1, by, bx+bw-1, by+bh-1)
+            p.drawLine(bx, by+bh-1, bx+bw-1, by+bh-1)
+            # Draw icon using the global draw_icon function
+            icon_size = min(IH - 2, 18)
+            icon_ox = bx + (bw - icon_size) // 2
+            icon_oy = by + (bh - icon_size) // 2
+            draw_icon(p, icon_name, icon_ox, icon_oy, icon_size)
+            # Running indicator — small dot below icon
+            if running:
+                p.setBrush(QBrush(QColor(0x00, 0x88, 0x00)))
+                p.setPen(Qt.NoPen)
+                p.drawEllipse(bx + bw//2 - 2, by + bh - 4, 4, 3)
+
+    def _draw_strip_icon(self, p, name, x, y, size):
+        """Draw tiny control strip system icons."""
+        p.save()
+        p.translate(x, y)
+        s = size
+        p.setPen(QPen(C_BLACK, 1))
+        if name == "monitor_depth":
+            p.fillRect(1, 0, s-3, s-4, QColor(0xCC, 0xDD, 0xFF))
+            p.drawRect(1, 0, s-4, s-5)
+            p.drawLine(s//2-2, s-4, s//2+2, s-4)
+            p.drawLine(s//2, s-5, s//2, s-3)
+            p.fillRect(2, 1, (s-6)//2, (s-6)//2, QColor(0xFF, 0x44, 0x44))
+            p.fillRect(2+(s-6)//2, 1, (s-6)//2, (s-6)//2, QColor(0x44, 0xFF, 0x44))
+            p.fillRect(2, 1+(s-6)//2, (s-6)//2, (s-6)//2, QColor(0x44, 0x44, 0xFF))
+            p.fillRect(2+(s-6)//2, 1+(s-6)//2, (s-6)//2, (s-6)//2, QColor(0xFF, 0xFF, 0x44))
+        elif name == "monitor_res":
+            p.fillRect(1, 0, s-3, s-4, C_WHITE)
+            p.drawRect(1, 0, s-4, s-5)
+            p.drawLine(s//2-2, s-4, s//2+2, s-4)
+            p.drawLine(s//2, s-5, s//2, s-3)
+            p.setPen(QPen(C_BLACK, 1))
+            for row2 in range(3):
+                p.drawLine(3, 2+row2*3, s-4, 2+row2*3)
+        elif name == "sound":
+            pts = QPolygon([QPoint(1, s//2-3), QPoint(4, s//2-3),
+                            QPoint(7, s//2-6), QPoint(7, s//2+6),
+                            QPoint(4, s//2+3), QPoint(1, s//2+3)])
+            p.setBrush(QBrush(C_BLACK))
+            p.drawPolygon(pts)
+            p.setBrush(Qt.NoBrush)
+            p.drawArc(7, s//2-4, 4, 8, 90*16, -180*16)
+            p.drawArc(7, s//2-6, 7, 12, 90*16, -180*16)
+        elif name == "brightness":
+            cx2, cy2 = s//2, s//2
+            p.setBrush(QBrush(QColor(0xFF, 0xDD, 0x00)))
+            p.drawEllipse(cx2-3, cy2-3, 6, 6)
+            p.setPen(QPen(C_BLACK, 1))
+            for angle in range(0, 360, 45):
+                rad = math.radians(angle)
+                p.drawLine(int(cx2 + 4*math.cos(rad)), int(cy2 + 4*math.sin(rad)),
+                           int(cx2 + 6*math.cos(rad)), int(cy2 + 6*math.sin(rad)))
+        p.restore()
+
+    def mousePressEvent(self, e):
+        if e.button() != Qt.LeftButton:
+            return
+        if self._collapsed:
+            self._collapsed = False
+            self._update_size()
+            self._reposition()
+            return
+        x = e.x()
+        # Check sys items
+        for i in range(len(self._sys_items)):
+            bx = self._sys_x(i)
+            if bx <= x < bx + self.ITEM_W:
+                self._pressed_sys = i
+                self.update()
+                return
+        # Check app items
+        for i in range(len(self._app_items)):
+            bx = self._app_x(i)
+            if bx <= x < bx + self.ITEM_W:
+                self._pressed_app = i
+                self.update()
+                return
+
+    def mouseReleaseEvent(self, e):
+        if e.button() != Qt.LeftButton:
+            return
+        sys_idx = self._pressed_sys
+        app_idx = self._pressed_app
+        self._pressed_sys = -1
+        self._pressed_app = -1
+        self.update()
+
+        if sys_idx >= 0:
+            _, _, cb = self._sys_items[sys_idx]
+            cb(self.mapToGlobal(QPoint(self._sys_x(sys_idx), self.height())))
+        elif app_idx >= 0:
+            icon_name, target, label = self._app_items[app_idx]
+            # If window running, raise it; else open it
+            for w in WM.windows:
+                if getattr(w, '_icon_target', '') == target:
+                    WM.raise_window(w)
+                    if getattr(w, '_minimized', False):
+                        w.restore()
+                    self._desk._menu.raise_()
+                    self._desk._wf_overlay.raise_()
+                    self.update()
+                    return
+            self._desk.open_window(target)
+
+    def mouseMoveEvent(self, e):
+        if self._collapsed:
+            return
+        x = e.x()
+        tip = ""
+        for i, (_, tooltip, _) in enumerate(self._sys_items):
+            bx = self._sys_x(i)
+            if bx <= x < bx + self.ITEM_W:
+                tip = tooltip
+                break
+        if not tip:
+            for i, (_, target, label) in enumerate(self._app_items):
+                bx = self._app_x(i)
+                if bx <= x < bx + self.ITEM_W:
+                    tip = label
+                    break
+        if tip:
+            self._tooltip_txt = tip
+            self._tooltip_pos = e.globalPos()
+            self._tooltip_timer.start(500)
+        else:
+            self._tooltip_timer.stop()
+
+    def _show_tooltip(self):
+        QToolTip.showText(self._tooltip_pos, self._tooltip_txt)
+
+    def _show_monitor_depth(self, pos):
+        m = QMenu(self)
+        m.setFont(font_chicago(10))
+        m.setStyleSheet(
+            "QMenu{background:#FFF; border:1px solid #000; padding:2px 0;}"
+            "QMenu::item{padding:2px 20px 2px 20px;}"
+            "QMenu::item:selected{background:#000; color:#FFF;}"
+            "QMenu::separator{height:1px; background:#888; margin:2px 4px;}")
+        title = m.addAction("Display")
+        title.setEnabled(False)
+        f = title.font(); f.setItalic(True); title.setFont(f)
+        m.addSeparator()
+        depths = [
+            ("Black & White",       "bw"),
+            ("4 Grays",             "gray4"),
+            ("16 Grays",            "gray16"),
+            ("256 Grays",           "gray256"),
+            ("16 Colors",           "color16"),
+            ("256 Colors",          "color256"),
+            ("Thousands of Colors", "thousands"),
+            ("Millions of Colors",  "millions"),
+        ]
+        current = getattr(self._desk, "_color_depth", "millions")
+        for label, key in depths:
+            act = m.addAction(label)
+            act.setCheckable(True)
+            act.setChecked(key == current)
+            act.triggered.connect(lambda checked, k=key: self._apply_color_depth(k))
+        m.exec_(pos)
+
+    def _apply_color_depth(self, key):
+        self._desk._color_depth = key
+        desk = self._desk
+        desk.setGraphicsEffect(None)
+        if key == "millions":
+            pass
+        elif key == "thousands":
+            eff = QGraphicsColorizeEffect(desk)
+            eff.setColor(QColor(200, 200, 220)); eff.setStrength(0.08)
+            desk.setGraphicsEffect(eff)
+        elif key == "color256":
+            eff = QGraphicsColorizeEffect(desk)
+            eff.setColor(QColor(180, 180, 200)); eff.setStrength(0.15)
+            desk.setGraphicsEffect(eff)
+        elif key == "color16":
+            eff = QGraphicsColorizeEffect(desk)
+            eff.setColor(QColor(160, 160, 180)); eff.setStrength(0.35)
+            desk.setGraphicsEffect(eff)
+        elif key in ("gray256", "gray16", "gray4"):
+            eff = QGraphicsColorizeEffect(desk)
+            eff.setColor(QColor(128, 128, 128)); eff.setStrength(1.0)
+            desk.setGraphicsEffect(eff)
+        elif key == "bw":
+            eff = QGraphicsColorizeEffect(desk)
+            eff.setColor(Qt.white); eff.setStrength(1.0)
+            desk.setGraphicsEffect(eff)
+
+    def _show_monitor_res(self, pos):
+        m = QMenu(self)
+        m.setFont(font_chicago(10))
+        m.setStyleSheet(
+            "QMenu{background:#FFF; border:1px solid #000; padding:2px 0;}"
+            "QMenu::item{padding:2px 20px 2px 20px;}"
+            "QMenu::item:selected{background:#000; color:#FFF;}"
+            "QMenu::separator{height:1px; background:#888; margin:2px 4px;}")
+        title = m.addAction("Resolution")
+        title.setEnabled(False)
+        f = title.font(); f.setItalic(True); title.setFont(f)
+        m.addSeparator()
+        screen = QApplication.primaryScreen().availableGeometry()
+        sw, sh = screen.width(), screen.height()
+        resos = [(sw, sh), (1920, 1080), (1440, 900), (1280, 800),
+                 (1024, 768), (800, 600), (640, 480)]
+        seen = set()
+        filtered = []
+        for rw, rh in resos:
+            if (rw, rh) not in seen and rw <= sw and rh <= sh:
+                seen.add((rw, rh)); filtered.append((rw, rh))
+        cur_w = getattr(self._desk, "_virt_w", sw)
+        cur_h = getattr(self._desk, "_virt_h", sh)
+        for rw, rh in filtered:
+            act = m.addAction(f"{rw} \u00d7 {rh}")
+            act.setCheckable(True)
+            act.setChecked(rw == cur_w and rh == cur_h)
+            act.triggered.connect(lambda checked, rw=rw, rh=rh: self._apply_resolution(rw, rh))
+        m.exec_(pos)
+
+    def _apply_resolution(self, rw, rh):
+        desk = self._desk
+        screen = QApplication.primaryScreen().availableGeometry()
+        sw, sh = screen.width(), screen.height()
+        desk._virt_w = rw
+        desk._virt_h = rh
+        if rw == sw and rh == sh:
+            desk.setGeometry(screen)
+        else:
+            desk.setGeometry(
+                screen.x() + (sw - rw) // 2,
+                screen.y() + (sh - rh) // 2,
+                rw, rh)
+        desk._desk_rect = QRect(0, 22, desk.width(), desk.height() - 22)
+        desk._menu.setGeometry(0, 0, desk.width(), 22)
+        if hasattr(desk, "_control_strip"):
+            desk._control_strip._reposition()
+
+    def _show_volume(self, pos):
+        m = QMenu(self)
+        m.setFont(font_chicago(10))
+        m.setStyleSheet(
+            "QMenu{background:#FFF; border:1px solid #000; padding:2px 0;}"
+            "QMenu::item{padding:2px 20px 2px 20px;}"
+            "QMenu::item:selected{background:#000; color:#FFF;}")
+        title = m.addAction("Sound Volume")
+        title.setEnabled(False)
+        f = title.font(); f.setItalic(True); title.setFont(f)
+        m.addSeparator()
+        for i in range(7, -1, -1):
+            bar = "\u2588" * i + "\u2591" * (7-i)
+            act = m.addAction(f" {bar} {i}")
+            act.setCheckable(True)
+            if i == 5:
+                act.setChecked(True)
+        m.exec_(pos)
+
+    def _show_brightness(self, pos):
+        m = QMenu(self)
+        m.setFont(font_chicago(10))
+        m.setStyleSheet(
+            "QMenu{background:#FFF; border:1px solid #000; padding:2px 0;}"
+            "QMenu::item{padding:2px 20px 2px 20px;}"
+            "QMenu::item:selected{background:#000; color:#FFF;}")
+        title = m.addAction("Brightness")
+        title.setEnabled(False)
+        f = title.font(); f.setItalic(True); title.setFont(f)
+        m.addSeparator()
+        current = getattr(self._desk, "_brightness", 6)
+        for i in range(7, -1, -1):
+            bar = "\u2593" * i + "\u2591" * (7-i)
+            act = m.addAction(f" {bar} {i}")
+            act.setCheckable(True)
+            act.setChecked(i == current)
+            act.triggered.connect(lambda checked, v=i: self._apply_brightness(v))
+        m.exec_(pos)
+
+    def _apply_brightness(self, level):
+        self._desk._brightness = level
+        desk = self._desk
+        if not hasattr(desk, "_brightness_overlay"):
+            overlay = QWidget(desk)
+            overlay.setAttribute(Qt.WA_TransparentForMouseEvents)
+            overlay.setAttribute(Qt.WA_NoSystemBackground)
+            desk._brightness_overlay = overlay
+        overlay = desk._brightness_overlay
+        overlay.setGeometry(desk.rect())
+        if level >= 7:
+            overlay.hide()
+            return
+        alpha = int((7 - level) * 30)
+        overlay.setStyleSheet(f"background: rgba(0,0,0,{alpha});")
+        overlay.show()
+        overlay.raise_()
+
+    def _reposition(self):
+        desk = self._desk
+        x = 2
+        y = desk.height() - self.HEIGHT - 4
+        self.move(x, y)
+        self.raise_()
+
+
+
+# ─────────────────────────────────────────────────────────────
 #  WIREFRAME DRAG OVERLAY  (always on top of all windows)
 # ─────────────────────────────────────────────────────────────
 class _WireframeOverlay(QWidget):
@@ -3082,6 +4436,10 @@ class Desktop75(QWidget):
         # No bottom app switcher — System 7 uses Application Menu in menubar
         self._wf_overlay = _WireframeOverlay(self)
 
+        # Control Strip — bottom-left floating panel (System 7.5)
+        self._control_strip = ControlStrip(self)
+        WM.changed.connect(lambda: self._control_strip.update())
+
         self._desk_rect = QRect(0, 22, self.width(), self.height()-22)
 
         # RIGHT-side desktop icons — System 7 style, column from top-right
@@ -3091,7 +4449,6 @@ class Desktop75(QWidget):
             ("Macintosh HD", "macintosh_hd", "finder"),
             ("The Outside World", "browser",  "browser"),
             ("Stickies",     "stickies",    "stickies"),
-            ("MacPaint",     "macpaint",    "macpaint"),
         ]
         self._icons = []
         ICON_W, ICON_H, MARGIN = 80, 80, 8
@@ -3118,6 +4475,16 @@ class Desktop75(QWidget):
         trash_ic.hide()
         trash_ic.setWindowOpacity(0.0)
         self._icons.append(trash_ic)
+
+        # "Apps" folder — above Trash, contains Clock, Calculator, all other apps
+        apps_ic = DesktopIcon75(self, "Apps", "folder", 0, 0, "other_folder")
+        apps_ic._rx = -(ICON_W + MARGIN)
+        apps_ic._ry = -(ICON_H * 2 + 50)   # above Trash
+        apps_ic._ry_from_bottom = True
+        apps_ic.dbl_clicked.connect(lambda t, ic_w, d=self: d._open_other_folder(ic_w))
+        apps_ic.hide()
+        apps_ic.setWindowOpacity(0.0)
+        self._icons.append(apps_ic)
 
         # Rubber-band selection — custom dashed 1px, not system rubber band
         self._sel_start = None
@@ -3149,19 +4516,25 @@ class Desktop75(QWidget):
     def _boot_done(self):
         """After boot: fade in menubar, then icons one by one, then open Finder."""
         self._menu.show()
-        self._menu.setWindowOpacity(0.0)
 
-        # Fade in menubar
-        anim_menu = QPropertyAnimation(self._menu, b"windowOpacity", self)
+        # Fade in menubar (use QGraphicsOpacityEffect — windowOpacity only works on top-level windows)
+        _effect = QGraphicsOpacityEffect(self._menu)
+        self._menu.setGraphicsEffect(_effect)
+        anim_menu = QPropertyAnimation(_effect, b"opacity", self)
         anim_menu.setDuration(300)
-        anim_menu.setStartValue(0.0); anim_menu.setEndValue(1.0)
+        anim_menu.setStartValue(0.0)
+        anim_menu.setEndValue(1.0)
+        anim_menu.finished.connect(lambda: self._menu.setGraphicsEffect(None))
         anim_menu.start(QAbstractAnimation.DeleteWhenStopped)
 
         # Icons appear one by one with 80ms stagger (right column, top to bottom)
         icons = list(self._icons)
         def _show_icon(idx):
             if idx >= len(icons):
-                # All done — open Finder window
+                # All done — show control strip, open Finder window
+                self._control_strip._reposition()
+                self._control_strip.show()
+                self._control_strip.raise_()
                 QTimer.singleShot(200, lambda: self.open_window("finder"))
                 return
             ic = icons[idx]
@@ -3186,13 +4559,45 @@ class Desktop75(QWidget):
         self._menu.setGeometry(0, 0, self.width(), 22)
         self._desk_rect = QRect(0, 22, self.width(), self.height()-22)
         self._reposition_icons()
+        if hasattr(self, '_control_strip'):
+            self._control_strip._reposition()
+            self._control_strip.raise_()
         super().resizeEvent(e)
+
+    def _open_other_folder(self, icon_widget=None):
+        """Open the /Other folder in Finder with zoom animation."""
+        w = FinderWindow(self, "/Other")
+        w._icon_target = "other_folder"
+        import random
+        margin = 40
+        desk_w = self._desk_rect.width()
+        desk_h = self._desk_rect.height()
+        win_w, win_h = w.width(), w.height()
+        max_x = max(margin, desk_w - win_w - margin)
+        max_y = max(margin, desk_h - win_h - margin)
+        rx = random.randint(margin, max_x) if max_x > margin else margin
+        ry = self._desk_rect.y() + random.randint(30, max(31, max_y)) if max_y > 30 else self._desk_rect.y() + 30
+        w.move(rx, ry)
+        WM.raise_window(w)
+        from_rect = self._desk_rect.center()
+        from_rect = QRect(self._desk_rect.center().x() - 20, self._desk_rect.center().y() - 20, 40, 40)
+        if icon_widget is not None:
+            from_rect = icon_widget.geometry()
+        w.setVisible(False)
+        self._zoom_rects_open(from_rect, w.geometry())
+        QTimer.singleShot(_ZoomRectsOverlay.DURATION_MS, lambda ww=w, fr=from_rect: (
+            ww.setVisible(True), ww.animate_open_from(fr)
+        ))
+        self._menu.raise_()
+        self._wf_overlay.raise_()
 
     def open_window(self, name: str, icon_widget=None):
         name = name.lower().replace(" ", "_")
         w = None
         if name == "finder":
             w = FinderWindow(self)
+        elif name == "calculator":
+            w = CalculatorWindow(self)
         elif name == "terminal":
             w = TerminalWindow(self)
         elif name == "browser":
@@ -3207,6 +4612,12 @@ class Desktop75(QWidget):
             w = StickiesWindow(self)
         elif name == "macpaint":
             w = MacPaintWindow(self)
+        elif name == "puzzle":
+            w = PuzzleWindow(self)
+        elif name == "scrapbook":
+            w = ScrapbookWindow(self)
+        elif name == "clock":
+            w = ClockWindow(self)
         elif name == "trash":
             w = TrashWindow(self)
             w._icon_target = "trash"
@@ -3215,7 +4626,6 @@ class Desktop75(QWidget):
         if w:
             w._icon_target = name  # used by close/minimize to find the icon
             import random
-            # Scatter windows across desktop area, avoid top/bottom bars
             margin = 40
             desk_w = self._desk_rect.width()
             desk_h = self._desk_rect.height()
@@ -3226,20 +4636,22 @@ class Desktop75(QWidget):
             ry = self._desk_rect.y() + random.randint(30, max(31, max_y)) if max_y > 30 else self._desk_rect.y() + 30
             w.move(rx, ry)
             WM.raise_window(w)
-            # ZoomRects: find the icon that triggered this, animate from its pos
             from_rect = QRect(self._desk_rect.center().x() - 20,
                               self._desk_rect.center().y() - 20, 40, 40)
             if icon_widget is not None:
-                from_rect = icon_widget.geometry()
+                ic_topleft = icon_widget.mapTo(self, QPoint(0, 0))
+                from_rect = QRect(ic_topleft, icon_widget.size())
             else:
-                # find icon matching name
                 for ic in self.findChildren(DesktopIcon75):
                     if ic.target == name:
                         from_rect = ic.geometry()
                         break
-            to_rect = w.geometry()
-            self._zoom_rects_open(from_rect, to_rect)
-            # Raise menubar on top (Z-order god layer)
+            w._icon_src_rect = from_rect
+            w.setVisible(False)
+            self._zoom_rects_open(from_rect, w.geometry())
+            QTimer.singleShot(_ZoomRectsOverlay.DURATION_MS, lambda ww=w, fr=from_rect: (
+                ww.setVisible(True), ww.animate_open_from(fr)
+            ))
             self._menu.raise_()
             self._wf_overlay.raise_()
 
@@ -3295,10 +4707,12 @@ class Desktop75(QWidget):
         self._zr_anim.raise_()
 
     def _zoom_rects_close(self, from_rect: QRect, to_rect: QRect):
-        """ZoomRects animation: contracting frames from window to icon."""
-        self._zr_anim = _ZoomRectsOverlay(self, from_rect, to_rect, opening=False)
-        self._zr_anim.show()
-        self._zr_anim.raise_()
+        """ZoomRects animation: contracting frames from window to close box."""
+        overlay = _ZoomRectsOverlay(self, from_rect, to_rect, opening=False)
+        overlay.show()
+        # Raise after Qt processes the window hide/redraw so overlay stays on top
+        QTimer.singleShot(0, overlay.raise_)
+        self._zr_anim = overlay
 
     # Desktop painting — dot grid like System 7
     def paintEvent(self, e):
